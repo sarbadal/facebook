@@ -1,0 +1,26 @@
+{
+  "PLATFORM": {
+      "time_range": "Last_5_days",
+      "breakdowns": ["device_platform", "publisher_platform", "platform_position"],
+      "action_breakdowns": ["action_type"],
+      "action_attribution_windows": ["7d_view", "28d_click"],
+      "level": "ad",
+      "time_increment": "all_days"
+  },
+  "GENDER": {
+      "time_range": "Last_5_days",
+      "breakdowns": ["gender", "age"],
+      "action_breakdowns": ["action_type"],
+      "action_attribution_windows": ["7d_view", "28d_click"],
+      "level": "ad",
+      "time_increment": "all_days"
+  },
+  "DMA": {
+      "time_range": "Last_5_days",
+      "breakdowns": ["dma"],
+      "action_breakdowns": ["action_type"],
+      "action_attribution_windows": ["7d_view", "28d_click"],
+      "level": "ad",
+      "time_increment": "all_days"
+  }
+}

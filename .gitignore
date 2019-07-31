@@ -1,0 +1,10 @@
+.idea
+.vscode
+credentials/credentials.json
+credentials/__pycache__/
+processing/__pycache__/
+utils/__pycache__/
+params/__pycache__/
+settings/__pycache__/
+venv/
+data/
