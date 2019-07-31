@@ -100,8 +100,6 @@ class CollectCredentialsParams:
         return zip(collect_param, outfiles)
 
 
-
-
 if __name__ == '__main__':
     params = CollectCredentialsParams()
     for i in params.process_params():
