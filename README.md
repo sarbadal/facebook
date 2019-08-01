@@ -20,34 +20,35 @@ are automatically downloaded from a pre-defined S3 buckets.
 ## Project structure...
 ```
 fb-api-project(root)
+|   main_file.py
 │   README.md 
 |   requirement.txt  
 │   .gitignore 
 │
-└───credentils
+└─── credentils
 │   │   __init__.py
 │   │   adobjectsfields.json  # This file holds the fields. This file will be replaced by downloading from S3
 |   |   credentials.json      # This file holds the credentials of both S3 and FB App. 
 |                               This file will be replaced by downloading from S3
-└───func
+└─── func
 |   │   __init__.py
 |   │   func.py               # Blank file. Will be removed / updated in future
 |
-└───params
+└─── params
 |   |   __init__.py
 |   |   fieldlist.json        # For AdObjects
 |   |   params.json           # For Insight data
 |   
-└───processing
+└─── processing
 |   |   __init__.py
 |   |   collectparams.py 
 |   |   run.py
 |
-└───settings
+└─── settings
 |   |   __init__.py
 |   |   settings.py 
 |   
-└───utils
+└─── utils
 |   |   __init__.py
 |   |   getData.py 
 |   |   s3FuncTools.py
@@ -60,7 +61,9 @@ fb-api-project(root)
 from processing.run import RunProcess
 
 r = RunProcess()
+r.get_adobject_data(ad_object='campaign')
 r.get_insights(saveto='data', data_limit=100)
+
 # File(s) will be stored in root/data directory
 ```
 

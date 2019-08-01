@@ -12,6 +12,7 @@ class RunProcess:
     def __init__(self):
         self.__fields = self._set_fields()
         self.__params = self._set_params()
+        self.__insight_adobj = self.initialise_get_insight_adobj()
 
 
     def display_params(self):
@@ -77,22 +78,29 @@ class RunProcess:
         return [p for p in cp.process_params()]
 
 
-    def get_insights(self, account_ids=None, business_ids=None, credentils=None, saveto='data', data_limit=250):
+    def initialise_get_insight_adobj(self, account_ids=None, business_ids=None, credentils=None):
+        """Initialise the GetInsightsAdObjects class"""
+        insight_ad_obj = GetInsightsAdObjects(
+            account_ids=account_ids,
+            business_ids=business_ids,
+            credentils=credentils
+        )
+        insight_ad_obj.initialize()
+
+        return insight_ad_obj
+
+
+    def get_insights(self, saveto='data', data_limit=250):
         """Download FB Insight Data"""
         import pandas as pd
 
         if not os.path.exists(os.path.join(BASE_DIR, saveto)):
             os.makedirs(os.path.join(BASE_DIR, saveto))
 
-        iaobj = GetInsightsAdObjects(
-            account_ids=account_ids,
-            business_ids=business_ids,
-            credentils=credentils
-        )
-        iaobj.initialize()
-
+        iaobj = self.__insight_adobj
         field = self.fields
-        for param, f in self.params[0:1]:
+
+        for param, f in self.params:
             df = iaobj.get_insights(fields=field, params=param, data_limit=data_limit)
             df.to_csv(
                 os.path.join(BASE_DIR, saveto, f),
@@ -103,6 +111,31 @@ class RunProcess:
             )
 
 
+    def get_adobject_data(self, saveto='data', ad_object=None, outfile=None):
+        """Download Ad Obj Info"""
+        import pandas as pd
+
+        if not os.path.exists(os.path.join(BASE_DIR, saveto)):
+            os.makedirs(os.path.join(BASE_DIR, saveto))
+
+        iaobj = self.__insight_adobj
+
+        if outfile is None:
+            outfile = f'fb_{ad_object}.csv'
+
+        df = iaobj.get_adobject_info(ad_object=ad_object)
+        df.to_csv(
+            os.path.join(BASE_DIR, saveto, outfile),
+            sep=',',
+            header=True,
+            encoding='utf-8',
+            index=False
+        )
+
+
+
 if __name__ == '__main__':
     r = RunProcess()
+    r.get_adobject_data(ad_object='campaign')
     r.get_insights(saveto='data', data_limit=100)
+
