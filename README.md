@@ -27,7 +27,8 @@ fb-api-project(root)
 │
 └─── credentils
 │   │   __init__.py
-│   │   adobjectsfields.json  # This file holds the fields. This file will be replaced by downloading from S3
+│   │   adobjectsfields.json  # This file holds the fields. 
+|   |                         # This file will be replaced by downloading from S3
 |   |   credentials.json      # This file holds the credentials of both S3 and FB App. 
 |                               This file will be replaced by downloading from S3
 └─── func

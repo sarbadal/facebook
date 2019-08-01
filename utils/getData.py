@@ -168,6 +168,8 @@ class GetInsightsAdObjects:
         and extract only relivant AdAccounts.
         Return list of AdAccount
         """
+        import time
+
         if self.account_ids and not self.business_ids:
             return {
                 'BusinessID': {
@@ -193,7 +195,7 @@ class GetInsightsAdObjects:
                 result['BusinessID'][_business['id']] = []
                 for _account in _business.get_owned_ad_accounts():
                     result['BusinessID'][_business['id']].append(_account)
-                count_down(60)
+                time.sleep(60)
             return result
 
         elif self.account_ids and self.business_ids:
@@ -212,7 +214,7 @@ class GetInsightsAdObjects:
                     _account for _account in accounts_in_userlist
                     if _account in result['BusinessID'][_business['id']]
                 ]
-                count_down(60)
+                time.sleep(60)
             return result
 
         else:
