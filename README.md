@@ -11,7 +11,7 @@ are automatically downloaded from a pre-defined S3 buckets.
 </p>
 
 > **Features of this tool are --**
->- User can customized the what needs to pulled just by changing / editing json file in S3 location
+>- User can customize the what needs to be pulled just by changing / editing json file in S3 location
 >- User can add data pull just by adding parameters in a json file
 >- Credentials folder location and 
 >- data dropped location can be changed without developer's intervention
