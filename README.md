@@ -56,11 +56,11 @@ project
 
 ## Sample code...
 ```python
-    from processing.run import RunProcess
+from processing.run import RunProcess
 
-    r = RunProcess()
-    r.get_insights(saveto='data', data_limit=100)
-    # File(s) will be stored in root/data directory
+r = RunProcess()
+r.get_insights(saveto='data', data_limit=100)
+# File(s) will be stored in root/data directory
 ```
 
 
