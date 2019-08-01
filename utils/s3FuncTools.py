@@ -213,14 +213,8 @@ class FileTransferS3(object):
         
     def __get_bucket(self):
         """Get the bucket."""
-        conn = S3Connection(
-            self.s3_access_key, 
-            self.s3_secret_key
-        )
-        return conn.get_bucket(
-            self.bucket_name, 
-            validate=False
-        )
+        conn = S3Connection(self.s3_access_key, self.s3_secret_key)
+        return conn.get_bucket(self.bucket_name, validate=False)
 
 
     def get_files_from_s3(self, bucket=None, prefix=None, delimiter=None, verbose=False):
