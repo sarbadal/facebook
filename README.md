@@ -19,9 +19,10 @@ are automatically downloaded from a pre-defined S3 buckets.
 
 ## Project structure...
 ```
-project
-│   README.md
-│   .gitignore    
+fb-api-project(root)
+│   README.md 
+|   requirement.txt  
+│   .gitignore 
 │
 └───credentils
 │   │   __init__.py
