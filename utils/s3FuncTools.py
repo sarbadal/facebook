@@ -1,3 +1,5 @@
+# emcoding=utf-8
+
 import os
 import boto3
 import botocore
@@ -9,7 +11,7 @@ from settings.settings import BASE_DIR
 
 class FileTransferS3(object):
     """
-    Combination of file upload, 
+    Combination of file upload,
     file download and file delete methods.
     """
     name = 's3FileTransfer class'
@@ -26,7 +28,6 @@ class FileTransferS3(object):
         self.dir_path = dir_path
         self.upload_files = upload_files
         self.download_files = download_files
-
 
     @property
     def s3_access_key(self):
@@ -78,40 +79,64 @@ class FileTransferS3(object):
         """Set s3_path"""
         self.__s3_path = s3_path
 
-
     @staticmethod
     def load_credentials(credentils_json=None, file=False):
         """
         Loding credentials from json file
-        Default locatiom: credentials\credentials.json file
+        Default locatiom: credentials\\credentials.json file
         """
         import json
 
         if credentils_json is None:
-            filename = os.path.join(BASE_DIR, 'credentials', 'credentials.json')
+            filename = os.path.join(
+                BASE_DIR, 'credentials', 'credentials.json'
+            )
 
             with open(filename, 'r') as f:
                 c = json.load(f)['S3']
-                return c['s3_access_key'], c['s3_secret_key'], c['bucket_name'], c['base_path'], c['s3_path']
+                return (
+                    c['s3_access_key'],
+                    c['s3_secret_key'],
+                    c['bucket_name'],
+                    c['base_path'],
+                    c['s3_path']
+                )
 
         elif file:
             with open(file, 'r') as f:
                 c = json.load(f)['S3']
-                return c['s3_access_key'], c['s3_secret_key'], c['bucket_name'], c['base_path'], c['s3_path']
+                return (
+                    c['s3_access_key'],
+                    c['s3_secret_key'],
+                    c['bucket_name'],
+                    c['base_path'],
+                    c['s3_path']
+                )
 
         else:
             try:
                 c = credentils_json
-                return c['s3_access_key'], c['s3_secret_key'], c['bucket_name'], c['base_path'], c['s3_path']
+                return (
+                    c['s3_access_key'],
+                    c['s3_secret_key'],
+                    c['bucket_name'],
+                    c['base_path'],
+                    c['s3_path']
+                )
 
-            except:
+            except Exception:
                 try:
                     c = credentils_json['S3']
-                    return c['s3_access_key'], c['s3_secret_key'], c['bucket_name'], c['base_path'], c['s3_path']
-                except:
+                    return (
+                        c['s3_access_key'],
+                        c['s3_secret_key'],
+                        c['bucket_name'],
+                        c['base_path'],
+                        c['s3_path']
+                    )
+                except Exception:
                     print("Couldn't load credentials")
                     return None, None, None, None, None
-
 
     def _s3_connection(self):
         """Connection"""
@@ -123,16 +148,14 @@ class FileTransferS3(object):
                 config=Config(signature_version='s3v4'),
                 verify=False
             )
-        except:
+        except Exception:
             print('Could not establish connection.')
             return None
-
 
     @property
     def name(self):
         """Getter method - name"""
         return self._name
-
 
     def uploadfile_to_s3(self, from_dir=None, s3_dir=None, files=None):
         """Upload file to a s3 Bucket."""
@@ -155,8 +178,8 @@ class FileTransferS3(object):
             with open(file_dir, 'rb') as df:
                 print(f'Uploading {df.name} ==> {s3_file}')
                 _s3.Bucket(self.bucket_name).upload_file(df.name, s3_file)
-        print(f'All {len(files)} file(s) have been uploaded successfully to s3 bucket')
-
+        print(f'All {len(files)} '
+              'file(s) have been uploaded successfully to s3 bucket')
 
     def downloadfile_from_s3(self, out_file_path=None, files=None):
         """Download files from S3."""
@@ -172,7 +195,7 @@ class FileTransferS3(object):
             f = os.path.join(self.s3_path, f).replace('\\', '/')
             try:
                 _s3.Bucket(self.bucket_name).download_file(
-                    f, 
+                    f,
                     os.path.join(out_file_path, os.path.basename(f))
                 )
                 print(f'{os.path.basename(f)} has been downloeded.')
@@ -184,7 +207,6 @@ class FileTransferS3(object):
                 else:
                     raise
 
-
     @property
     def all_buckets(self):
         """Get the list of all Buckets."""
@@ -195,7 +217,6 @@ class FileTransferS3(object):
             print(bucket_list.append(_bucket.name))
 
         return bucket_list
-
 
     @property
     def files_root(self):
@@ -210,14 +231,14 @@ class FileTransferS3(object):
 
         return files
 
-        
     def __get_bucket(self):
         """Get the bucket."""
         conn = S3Connection(self.s3_access_key, self.s3_secret_key)
         return conn.get_bucket(self.bucket_name, validate=False)
 
-
-    def get_files_from_s3(self, bucket=None, prefix=None, delimiter=None, verbose=False):
+    def get_files_from_s3(
+        self, bucket=None, prefix=None, delimiter=None, verbose=False
+    ):
         """
         Get the list.
         Params:
@@ -244,7 +265,6 @@ class FileTransferS3(object):
 
         return files
 
-
     def deletefile_from_s3(self, prefix=None):
         """Delete file/folder from S3 bucket."""
         # Prefix='incoming/file_2_delete'
@@ -258,7 +278,6 @@ class FileTransferS3(object):
         else:
             print('Prefix cannt be None')
             return None
-
 
     def __repr__(self):
         """
@@ -282,23 +301,21 @@ class FileTransferS3(object):
         else:
             _download_files = "'" + str(_download_files) + "'"
 
-        txt = f"FileTransferS3(s3_access_key='{self.s3_access_key}', s3_secret_key='{self.s3_secret_key}',"
-        txt += f" bucket_name='{self.bucket_name}', base_path='{self.base_path}', dir_path={_dir_path},"
-        txt += f" s3_path='{self.s3_path}', upload_files={_upload_files}, download_files={_download_files})"
+        txt = f"FileTransferS3(s3_access_key='{self.s3_access_key}',"
+        txt += f" s3_secret_key='{self.s3_secret_key}',"
+        txt += f" bucket_name='{self.bucket_name}',"
+        txt += f" base_path='{self.base_path}', dir_path={_dir_path},"
+        txt += f" bucket_name='{self.bucket_name}',"
+        txt += f" base_path='{self.base_path}', dir_path={_dir_path},"
+        txt += f" s3_path='{self.s3_path}', upload_files={_upload_files},"
+        txt += f" download_files={_download_files})"
 
         return txt
 
 
 if __name__ == '__main__':
-    from Settings.settings import BASE_DIR
- 
-    ft = FileTransferS3()
-    # print(ft)
-    # for f in ft.files_root:
-    #     print(f)
 
+    ft = FileTransferS3()
     files = ft.get_files_from_s3()
     for f in files:
         print(f)
-
-

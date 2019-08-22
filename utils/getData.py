@@ -1,5 +1,6 @@
+# emcoding=utf-8
+
 import os
-import datetime
 
 import warnings
 from facebookads.api import FacebookAdsApi
@@ -23,8 +24,11 @@ class GetInsightsAdObjects:
     def __init__(self, account_ids=None, business_ids=None, credentils=None):
         self.account_ids = account_ids
         self.business_ids = business_ids
-        self.__app_id, self.__app_secret, self.__access_token = self.load_credentials(credentils, file=False)
-
+        (
+            self.__app_id,
+            self.__app_secret,
+            self.__access_token
+        ) = self.load_credentials(credentils, file=False)
 
     def initialize(self, app_id=None, app_secret=None, access_token=None):
         """Initialize the FB API"""
@@ -54,7 +58,6 @@ class GetInsightsAdObjects:
             print('app_id, app_secret, and access_token must be set.')
             return False
 
-
     @property
     def app_id(self):
         """Return App ID"""
@@ -82,17 +85,18 @@ class GetInsightsAdObjects:
     def access_token(self, access_token):
         self.__access_token = access_token
 
-
     @staticmethod
     def load_credentials(credentils_json=None, file=False):
         """
         Loding credentials from json file
-        Default locatiom: credentials\credentials.json file
+        Default locatiom: credentials\\credentials.json file
         """
         import json
 
         if credentils_json is None:
-            filename = os.path.join(BASE_DIR, 'credentials', 'credentials.json')
+            filename = os.path.join(
+                BASE_DIR, 'credentials', 'credentials.json'
+            )
 
             with open(filename, 'r') as f:
                 c = json.load(f)['APP']
@@ -108,11 +112,11 @@ class GetInsightsAdObjects:
                 c = credentils_json
                 return c['APP_ID'], c['APP_SECRET'], c['ACCESS_TOKEN']
 
-            except:
+            except Exception:
                 try:
                     c = credentils_json['APP']
                     return c['APP_ID'], c['APP_SECRET'], c['ACCESS_TOKEN']
-                except:
+                except Exception:
                     print("Couldn't load credentials")
                     return None, None, None
 
@@ -122,7 +126,9 @@ class GetInsightsAdObjects:
         import json
 
         if filename is None:
-            filename = os.path.join(BASE_DIR, 'credentials', 'adobjectfields.json')
+            filename = os.path.join(
+                BASE_DIR, 'credentials', 'adobjectfields.json'
+            )
 
         if ad_object is not None:
 
@@ -131,7 +137,6 @@ class GetInsightsAdObjects:
 
         else:
             return None
-
 
     @staticmethod
     def _clean_account_id(txt):
@@ -161,7 +166,6 @@ class GetInsightsAdObjects:
             if status == 'Job Completed':
                 return job.get_result(params={"limit": data_limit})
 
-
     def _define_account(self):
         """
         It takes account and business list or None (befault)
@@ -173,7 +177,10 @@ class GetInsightsAdObjects:
         if self.account_ids and not self.business_ids:
             return {
                 'BusinessID': {
-                    'Unknown': [AdAccount('act_' + self._clean_account_id(_id)) for _id in self.account_ids]
+                    'Unknown': [
+                        AdAccount('act_' + self._clean_account_id(_id))
+                        for _id in self.account_ids
+                    ]
                 }
             }
 
@@ -186,7 +193,10 @@ class GetInsightsAdObjects:
             }
 
         elif not self.account_ids and self.business_ids:
-            business = [Business(self._clean_account_id(_id)) for _id in self.business_ids]
+            business = [
+                Business(self._clean_account_id(_id))
+                for _id in self.business_ids
+            ]
             result = {
                 'BusinessID': {}
             }
@@ -199,8 +209,14 @@ class GetInsightsAdObjects:
             return result
 
         elif self.account_ids and self.business_ids:
-            accounts_in_userlist = [AdAccount('act_' + self._clean_account_id(_id)) for _id in self.account_ids]
-            business = [Business(self._clean_account_id(_id)) for _id in self.business_ids]
+            accounts_in_userlist = [
+                AdAccount('act_' + self._clean_account_id(_id))
+                for _id in self.account_ids
+            ]
+            business = [
+                Business(self._clean_account_id(_id))
+                for _id in self.business_ids
+            ]
             result = {
                 'BusinessID': {}
             }
@@ -220,7 +236,6 @@ class GetInsightsAdObjects:
         else:
             return None
 
-
     @property
     def ad_acccounts(self):
         """
@@ -230,7 +245,6 @@ class GetInsightsAdObjects:
         Return list of AdAccount ID
         """
         return self._define_account
-
 
     def get_adobject_info(self, ad_object='creative', verbose=True):
         """
@@ -253,7 +267,9 @@ class GetInsightsAdObjects:
             ad_obj = 'get_campaigns'
 
         else:
-            print(f'{ad_object} is not valid. Valid objects are "creative", "ad", "adset", and "campaign"')
+            txt = '{} is not valid. Valid objects are {}, {}, {}, and {}'
+            txt = txt.format(ad_object, 'ad', 'adset', 'creative', 'campaign')
+            print(txt)
             return None
 
         text_to_execute = f"account.{ad_obj}(fields=fields['name'])"
@@ -274,22 +290,33 @@ class GetInsightsAdObjects:
                     fields['pd_field_list'] = [[] for _ in fields['name']]
                     time.sleep(1)
 
-                    for name, pd_field_list in zip(fields['name'], fields['pd_field_list']):
+                    for name, pd_field_list in zip(
+                        fields['name'], fields['pd_field_list']
+                    ):
                         pd_field_list.append(creative.get(name, float('nan')))
 
-                    tmp_df = pd.DataFrame(dict(zip(fields['name'], fields['pd_field_list'])))
+                    tmp_df = pd.DataFrame(dict(
+                        zip(fields['name'], fields['pd_field_list'])
+                        )
+                    )
                     if business != 'Unknown':
                         tmp_df['Business_ID'] = business
 
-                    df = pd.concat([df, tmp_df], axis=0, ignore_index=True, sort=False)
+                    df = pd.concat(
+                        [df, tmp_df], axis=0, ignore_index=True, sort=False
+                    )
 
-                if verbose: print(' Done')
-                ad_obj_df = pd.concat([ad_obj_df, df], axis=0, ignore_index=True, sort=False)
+                if verbose:
+                    print(' Done')
+                ad_obj_df = pd.concat(
+                    [ad_obj_df, df], axis=0, ignore_index=True, sort=False
+                )
 
         return ad_obj_df
 
-
-    def get_insights(self, fields=None, params=None, data_limit=500, verbose=True):
+    def get_insights(
+        self, fields=None, params=None, data_limit=500, verbose=True
+    ):
         """Return dataFrame of Facebook AdInsight data"""
         import pandas as pd
         import time
@@ -307,11 +334,16 @@ class GetInsightsAdObjects:
                     print(f'Fetching data for account {ad_id}...', end='')
 
                 job = account.get_insights_async(fields=fields, params=params)
-                result_cursor = self._wait_for_async_job(job, data_limit=data_limit)
+                result_cursor = self._wait_for_async_job(
+                    job, data_limit=data_limit
+                )
 
                 if result_cursor is not None:
 
-                    action_att_list = params.get('action_attribution_windows', []).copy()
+                    action_att_list = params.get(
+                        'action_attribution_windows',
+                        []
+                    ).copy()
                     action_att_list.append('value')
 
                     for i, stats in enumerate(result_cursor):
@@ -322,13 +354,13 @@ class GetInsightsAdObjects:
 
                         values, names = [], []
                         for stat in stats:
-                            if type(stats[stat]) == type('abc'):
+                            if isinstance(stats[stat], str):
                                 values.append([stats[stat]])
                                 names.append(stat.lower())
 
-                            if type(stats[stat]) == type([]):
+                            if isinstance(stats[stat], list):
 
-                                for dict_values in stats[stat]:  # dict_values is a Python dict
+                                for dict_values in stats[stat]:
                                     col = stat
 
                                     for key, value in dict_values.items():
@@ -342,29 +374,38 @@ class GetInsightsAdObjects:
                                             field = col + '|' + att_window
 
                                         names.append(field)
-                                        values.append([dict_values.get(att_window, '0')])
+                                        values.append(
+                                            [dict_values.get(att_window, '0')]
+                                        )
 
                         tmp_df = pd.DataFrame(dict(zip(names, values)))
 
                         if business != 'Unknown':
                             tmp_df['Business_ID'] = business
 
-                        df = pd.concat([df, tmp_df], axis=0, ignore_index=True, sort=False)
+                        df = pd.concat(
+                            [df, tmp_df], axis=0, ignore_index=True, sort=False
+                        )
 
-                    if verbose: print(' Done')
+                    if verbose:
+                        print(' Done')
 
-                    insight_df = pd.concat([insight_df, df], axis=0, ignore_index=True, sort=False)
+                    insight_df = pd.concat(
+                        [insight_df, df], axis=0, ignore_index=True, sort=False
+                    )
 
                 else:
                     if verbose:
-                        print(f'Time out... Data for Ad Account {ad_id} will not be pulled.')
+                        print(f'Time out... '
+                              f'Data for Ad Account {ad_id} '
+                              'will not be pulled.')
 
         return insight_df
 
 
 if __name__ == '__main__':
     import pandas as pd
-    from facebookads.adobjects.adsinsights import AdsInsights
+    # from facebookads.adobjects.adsinsights import AdsInsights
 
     # Set Print option
     pd.set_option('display.max_rows', 500)
@@ -377,7 +418,9 @@ if __name__ == '__main__':
             'since': '2019-05-01',
             'until': '2019-05-01'
         },
-        'breakdowns': ['device_platform', 'publisher_platform', 'platform_position'],
+        'breakdowns': [
+            'device_platform', 'publisher_platform', 'platform_position'
+        ],
         'action_breakdowns': ['action_type'],
         'level': "campaign",
         'time_increment': 'all_days'
