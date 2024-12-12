@@ -8,9 +8,7 @@ from settings.settings import BASE_DIR
 
 
 class RunProcess:
-    """
-    Run the process and drop results in designated S3 location.
-    """
+    """ Run the process and drop results in the designated S3 location. """
 
     def __init__(self):
         self.__fields = self._set_fields()
@@ -66,14 +64,12 @@ class RunProcess:
         self.__fields = self._set_fields(fields=fields)
 
     def _set_params(self):
-        """Download params using class 'CollectCredentialsParams'."""
+        """ Download params using class 'CollectCredentialsParams'. """
         cp = CollectCredentialsParams()
         return [p for p in cp.process_params()]
 
-    def initialise_get_insight_adobj(
-        self, account_ids=None, business_ids=None, credentils=None
-    ):
-        """Initialise the GetInsightsAdObjects class"""
+    def initialise_get_insight_adobj(self, account_ids=None, business_ids=None, credentils=None):
+        """ Initialise the GetInsightsAdObjects class """
         insight_ad_obj = GetInsightsAdObjects(
             account_ids=account_ids,
             business_ids=business_ids,
@@ -94,7 +90,9 @@ class RunProcess:
 
         for param, f in self.params:
             df = iaobj.get_insights(
-                fields=field, params=param, data_limit=data_limit
+                fields=field, 
+                params=param, 
+                data_limit=data_limit
             )
             df.to_csv(
                 os.path.join(BASE_DIR, saveto, f),
